@@ -1,4 +1,4 @@
-import 'package:dewbiapp/Screens/home_screen.dart';
+import 'package:dewbiapp/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -28,12 +28,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         keyboardType: TextInputType.emailAddress,
         validator: (value) {
           if (value!.isEmpty) {
-            return ("Please Enter Your Email");
+            return ("이메일을 입력해 주세요.");
           }
           // reg expression for email validation
           if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
               .hasMatch(value)) {
-            return ("Please Enter a valid email");
+            return ("유효한 이메일을 입력해 주세요.");
           }
           return null;
         },
@@ -44,7 +44,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.mail),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Email",
+          hintText: "이메일",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -58,10 +58,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         validator: (value) {
           RegExp regex = RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
-            return ("Password is required for login");
+            return ("패스워드를 입력해 주세요.");
           }
           if (!regex.hasMatch(value)) {
-            return ("Enter Valid Password(Min. 6 Character)");
+            return ("비밀번호는 6자 이상이어야 합니다.");
           }
           return null;
         },
@@ -72,7 +72,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.vpn_key),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Password",
+          hintText: "비밀번호 입력",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -86,7 +86,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         validator: (value) {
           if (confirmPasswordEditingController.text !=
               passwordEditingController.text) {
-            return "Password don't match";
+            return "비밀번호가 일치하지 않습니다.";
           }
           return null;
         },
@@ -97,7 +97,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.vpn_key),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Confirm Password",
+          hintText: "비밀번호 확인",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -115,7 +115,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           signUp(emailEditingController.text, passwordEditingController.text);
         },
         child: const Text(
-          "SignUp",
+          "회원가입",
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
@@ -188,12 +188,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     // userModel.email = user!.email;
     // userModel.uid = user.uid;
 
-    showSnackBar("Account created successfully :)",
+    showSnackBar("회원가입을 축하드립니다! :)",
         const Duration(milliseconds: 1000));
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
         (route) => false);
   }
 

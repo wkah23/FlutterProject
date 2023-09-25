@@ -25,6 +25,8 @@ dependencies:
   location_geocoder: ^1.0.5
   url_launcher: ^6.1.14
   google_sign_in: ^6.1.5
+  flutter_linkify: ^6.0.0
+  carousel_slider: ^4.2.1
 
   cupertino_icons: ^1.0.2
 

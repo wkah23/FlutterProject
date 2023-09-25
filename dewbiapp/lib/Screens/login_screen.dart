@@ -1,5 +1,5 @@
-import 'package:dewbiapp/Screens/add_login_screen.dart';
-import 'package:dewbiapp/Screens/home_screen.dart';
+import 'package:dewbiapp/mainpage.dart';
+import 'package:dewbiapp/screens/registration_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -30,12 +30,12 @@ class _LoginScreenState extends State<LoginScreen> {
         keyboardType: TextInputType.emailAddress,
         validator: (value) {
           if (value!.isEmpty) {
-            return ("Please Enter Your Email");
+            return ("이메일을 입력해주세요.");
           }
           // reg expression for email validation
           if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
               .hasMatch(value)) {
-            return ("Please Enter a valid email");
+            return ("유효한 이메일을 입력해주세요.");
           }
           return null;
         },
@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.mail),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Email",
+          hintText: "이메일",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -60,10 +60,10 @@ class _LoginScreenState extends State<LoginScreen> {
         validator: (value) {
           RegExp regex = RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
-            return ("Password is required for login");
+            return ("비밀번호를 입력해 주세요.");
           }
           if (!regex.hasMatch(value)) {
-            return ("Enter Valid Password(Min. 6 Character)");
+            return ("비밀번호가 다릅니다.");
           }
           return null;
         },
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.vpn_key),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Password",
+          hintText: "비밀번호",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
             signIn(emailController.text, passwordController.text);
           },
           child: const Text(
-            "Login",
+            "로그인",
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const Text("Don't have an account? "),
+                          const Text("아직 회원이 아니신가요? "),
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           const RegistrationScreen()));
                             },
                             child: const Text(
-                              "SignUp",
+                              "회원가입하기",
                               style: TextStyle(
                                   color: Colors.redAccent,
                                   fontWeight: FontWeight.bold,
@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
               showSnackBar("Login Successful",
                   const Duration(milliseconds: 1000)),
               Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const HomeScreen())),
+                  MaterialPageRoute(builder: (context) => const MainPage())),
             })
         .catchError((e) => {
               showSnackBar(e!.message,
