@@ -5,6 +5,8 @@ import 'package:dewbiapp/pages/profile.dart';
 import 'package:dewbiapp/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -14,6 +16,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final _auth = FirebaseAuth.instance;
+  
   int _selectedIndex = 0;
   List<BottomNavigationBarItem> bottomItems = [
     const BottomNavigationBarItem(
@@ -48,33 +52,77 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     userEmail = user!.email!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("메인페이지"),
-        actions: [
-          IconButton(
-              onPressed: () {
-                logout(context);
-              },
-              icon: const Icon(Icons.logout)),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: SizedBox(
+              child: Image.asset(
+                'assets/images/car3.png',
+                width: 120,
+                height: 120,
+                fit: BoxFit.contain,
+              ),
+            ),
+          centerTitle: true,
+          elevation: 5,
+        ),
+        drawerEnableOpenDragGesture: false,
+        endDrawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'Drawer Header',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.message),
+                title: Text('Message'),
+              ),
+              const ListTile(
+                leading: Icon(Icons.account_circle),
+                title: Text('Profile'),
+              ),
+              const ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Drawer Close'),
+              ),
+              ListTile(
+                
+                leading: const Icon(Icons.logout_rounded),
+                title: const Text('로그아웃'),
+                onTap: (() {
+                  logout(context);
+                }),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey.withOpacity(.60),
+          selectedFontSize: 14,
+          unselectedFontSize: 10,
+          currentIndex: _selectedIndex,
+          onTap: (int index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          items: bottomItems,
+        ),
+        body: pages[_selectedIndex],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey.withOpacity(.60),
-        selectedFontSize: 14,
-        unselectedFontSize: 10,
-        currentIndex: _selectedIndex,
-        onTap: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: bottomItems,
-      ),
-      body: pages[_selectedIndex],
     );
   }
 
@@ -97,7 +145,7 @@ class _MainPageState extends State<MainPage> {
 
   // the logout function
   Future<void> logout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
+    await _auth.signOut();
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginScreen()));
   }

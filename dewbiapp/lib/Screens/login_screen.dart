@@ -2,6 +2,7 @@ import 'package:dewbiapp/mainpage.dart';
 import 'package:dewbiapp/screens/registration_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -97,6 +98,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           )),
     );
+    
+    Future<UserCredential> signInWithGoogle() async {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      return await _auth.signInWithCredential(credential);
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -118,6 +129,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 35),
                     loginButton,
                     const SizedBox(height: 15),
+                    IconButton(
+                      onPressed: () async {
+                        await signInWithGoogle();
+                        Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const MainPage()));
+                      }, 
+                      icon: Image.asset(
+                        'assets/images/google.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.contain,
+                      ),
+                      // child: Image.asset(
+                      //   "assets/images/google.png",
+                      //   width: 50,
+                      //   height: 50,
+                      //   fit: BoxFit.contain,
+                      // ),
+                    ),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -138,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontSize: 15),
                             ),
                           )
-                        ])
+                        ]),
                   ],
                 ),
               ),
@@ -155,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await _auth
         .signInWithEmailAndPassword(email: email, password: password)
         .then((uid) => {
-              showSnackBar("Login Successful",
+              showSnackBar("로그인 성공했습니다!",
                   const Duration(milliseconds: 1000)),
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => const MainPage())),

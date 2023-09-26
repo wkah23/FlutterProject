@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,9 +12,11 @@ class HomeScreen extends StatefulWidget {
   String userEmail = "";
 
 class _HomeScreenState extends State<HomeScreen> {
-  String userEmail = user!.email!;
+  // final _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
+    userEmail = user!.email!;
     return Scaffold(
       body: Center(
         child: Padding(
@@ -22,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              
               Text(
                 "환영합니다!  $userEmail 님",
                 style: const TextStyle(fontSize: 20, 
