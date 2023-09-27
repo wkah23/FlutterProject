@@ -123,31 +123,45 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(
+                      width: 150, height: 150,
+                      child: Image.asset('assets/images/car3.png'),
+                    ),
+                    const SizedBox(height: 25),
                     emailField,
                     const SizedBox(height: 25),
                     passwordField,
                     const SizedBox(height: 35),
                     loginButton,
                     const SizedBox(height: 15),
-                    IconButton(
+                    ElevatedButton(
                       onPressed: () async {
                         await signInWithGoogle();
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => const MainPage()));
-                      }, 
-                      icon: Image.asset(
-                        'assets/images/google.png',
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.contain,
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(50),
+                        elevation: 1.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
                       ),
-                      // child: Image.asset(
-                      //   "assets/images/google.png",
-                      //   width: 50,
-                      //   height: 50,
-                      //   fit: BoxFit.contain,
-                      // ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Image.asset('assets/images/glogo.png'),
+                          const Text('Google 계정으로 로그인',
+                          style: TextStyle(color: Colors.black87,
+                            fontSize: 14.0)),
+                          Opacity(opacity: 0.0,
+                          child: Image.asset('assets/images/glogo.png')),
+                        ],
+                      ),
                     ),
+                    const SizedBox(height: 15),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[

@@ -5,7 +5,6 @@ import 'package:dewbiapp/pages/profile.dart';
 import 'package:dewbiapp/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -85,15 +84,15 @@ class _MainPageState extends State<MainPage> {
               ),
               const ListTile(
                 leading: Icon(Icons.message),
-                title: Text('Message'),
+                title: Text('활동기록'),
               ),
               const ListTile(
                 leading: Icon(Icons.account_circle),
-                title: Text('Profile'),
+                title: Text('프로필'),
               ),
               const ListTile(
                 leading: Icon(Icons.settings),
-                title: Text('Drawer Close'),
+                title: Text('환경설정'),
               ),
               ListTile(
                 

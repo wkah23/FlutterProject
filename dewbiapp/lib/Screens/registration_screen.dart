@@ -21,6 +21,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     //email field
     final emailField = TextFormField(
         autofocus: false,
@@ -128,7 +129,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.red),
+          icon: const Icon(Icons.arrow_back, color: Colors.black54),
           onPressed: () {
             // passing this to our root
             Navigator.of(context).pop();
