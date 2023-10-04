@@ -5,6 +5,7 @@ import 'package:dewbiapp/pages/profile.dart';
 import 'package:dewbiapp/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -13,9 +14,12 @@ class MainPage extends StatefulWidget {
   @override
   State<MainPage> createState() => _MainPageState();
 }
+  User? user = FirebaseAuth.instance.currentUser;
+  String userEmail = "";
 
 class _MainPageState extends State<MainPage> {
   final _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
   
   int _selectedIndex = 0;
   List<BottomNavigationBarItem> bottomItems = [
@@ -28,8 +32,8 @@ class _MainPageState extends State<MainPage> {
       icon: Icon(Icons.car_repair),
     ),
     const BottomNavigationBarItem(
-      label: '마이뮤직',
-      icon: Icon(Icons.music_note_rounded),
+      label: '내차 자랑',
+      icon: Icon(Icons.favorite_rounded),
     ),
     const BottomNavigationBarItem(
       label: '프로필',
@@ -44,8 +48,6 @@ class _MainPageState extends State<MainPage> {
     const ProfileScreen(),
   ];
 
-  User? user = FirebaseAuth.instance.currentUser;
-  String userEmail = "";
 
   @override
   Widget build(BuildContext context) {
@@ -64,18 +66,19 @@ class _MainPageState extends State<MainPage> {
             ),
           centerTitle: true,
           elevation: 5,
+          backgroundColor: Colors.white,
         ),
         drawerEnableOpenDragGesture: false,
         endDrawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
+               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.grey,
                 ),
                 child: Text(
-                  'Drawer Header',
+                  '$userEmail 님',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -95,7 +98,6 @@ class _MainPageState extends State<MainPage> {
                 title: Text('환경설정'),
               ),
               ListTile(
-                
                 leading: const Icon(Icons.logout_rounded),
                 title: const Text('로그아웃'),
                 onTap: (() {
@@ -145,6 +147,7 @@ class _MainPageState extends State<MainPage> {
   // the logout function
   Future<void> logout(BuildContext context) async {
     await _auth.signOut();
+    await googleSignIn.signOut();
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginScreen()));
   }

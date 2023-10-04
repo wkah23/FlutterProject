@@ -1,7 +1,12 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:remedi_kopo/remedi_kopo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,16 +16,49 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String dropName = '국산';
-  String dropName1 = '현대';
-  final foreignCar = ['벤츠','아우디','BMW','포르쉐','테슬라','미니'];
-  String dropName2 = '벤츠';
+  User? user = FirebaseAuth.instance.currentUser;
+  String userEmail = "";
+  
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+  final storage = FirebaseStorage.instance;
+  String? downloadURL;
   File? mPhoto;
   XFile? image;
   final ImagePicker _picker = ImagePicker();
+  late SharedPreferences prefs;
+  late CollectionReference members;
+  TextEditingController nameCon = TextEditingController();
+  TextEditingController carMadeCon = TextEditingController();
+  TextEditingController carModelCon = TextEditingController();
+  TextEditingController garageCon = TextEditingController();
+  String nameField = '';
+  String carMadeField = '';
+  String carModelField = '';
+  String garageField = '';
+  bool isProfileLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!isProfileLoaded) {
+      _fetchUserData(); // 프로필 정보를 처음 생성할 때만 불러오도록 수정
+    }
+  }
+  Future<void> _fetchUserData() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final userData = await _firestore.collection('members').doc(user.email).get();
+      setState(() {
+        nameField = userData.get('name');
+        isProfileLoaded = true;
+      });
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
+    userEmail = user!.email!;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -34,15 +72,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 15,),
             imageProfile(),
             const SizedBox(height: 50,),
-            nameTextField(),
-            const SizedBox(height: 25,),
-            const Text(
-              '차종 선택',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.left,
-            ),
             carTextField(),
             const SizedBox(height: 15,),
+            ElevatedButton(
+              onPressed: () {
+                _uploadProfileImage();
+              }, 
+              child: const Text('저장하기')
+            ),
           ],
         ),
       ),
@@ -80,82 +117,130 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-  Widget nameTextField() {
-    return TextFormField(
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.black,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 2,
-          ),
-        ),
-        prefixIcon: Icon(
-          Icons.person,
-          color: Colors.grey,
-        ),
-        labelText: '이름',
-        hintText: '이름을 입력하세요',
-      ),
-    );
-  }
 
   Widget carTextField() {
-    return Row(
+    return Column(
       children: [
-        DropdownButton<String>(
-          style: const TextStyle(color: Colors.black87),
-          value: dropName,
-          items: const [
-            '수입',
-            '국산',
-          ].map((value1) {
-            return DropdownMenuItem(
-              value: value1,
-              child: Text(value1),
-            );
-          }).toList(),
-          hint: const Text('제조국'),
-          onChanged: (String? value1) {
+        TextField(
+          controller: nameCon,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 2,
+              ),
+            ),
+            prefixIcon: Icon(
+              Icons.person,
+              color: Colors.grey,
+            ),
+            labelText: '이름',
+            hintText: '이름을 입력하세요',
+          ),
+          onChanged: (value) {
             setState(() {
-              dropmenuSelected(value1!);
-              dropName = value1;
+              nameField = value;
             });
           },
         ),
-        const SizedBox(width: 25,),
-        DropdownButton<String>(
-          style: const TextStyle(color: Colors.black87),
-          value: dropName1,
-          items: [
-            '현대','기아','제네시스','쉐보레','르노삼성','쌍용'
-          ].map((value2) {
-              return DropdownMenuItem(
-                value: value2,
-                child: Text(value2),
-              );
-          }).toList(),
-          hint: const Text('차제조사'),
-          onChanged: (String? value2) {
+        const SizedBox(height: 25,),
+        TextField(
+          controller: carMadeCon,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 2,
+              ),
+            ),
+            prefixIcon: Icon(
+              Icons.car_repair_outlined,
+              color: Colors.grey,
+            ),
+            labelText: '차 제조사',
+            hintText: '차량 제조사를 입력하세요 ex : 벤츠',
+          ),
+          onChanged: (value) {
             setState(() {
-                dropName1 = value2!;
+              carMadeField = value; // 값 업데이트
+            });
+          },
+        ),
+        const SizedBox(height: 25,),
+        TextField(
+          controller: carModelCon,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 2,
+              ),
+            ),
+            prefixIcon: Icon(
+              Icons.car_repair_outlined,
+              color: Colors.grey,
+            ),
+            labelText: '차량 모델',
+            hintText: '차량 모델명을 입력하세요',
+          ),
+          onChanged: (value) {
+            setState(() {
+              carModelField = value; // 값 업데이트
+            });
+          },
+        ),
+        const SizedBox(height: 25,),
+        TextField(
+          controller: garageCon,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 2,
+              ),
+            ),
+            prefixIcon: Icon(
+              Icons.garage,
+              color: Colors.grey,
+            ),
+            labelText: '차고지',
+            hintText: '차고지의 주소를 간략히 입력하세요',
+          ),
+          onTap: () async {
+            final KopoModel model = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RemediKopo(),
+              ),
+            );
+            setState(() {
+              garageCon.text = model.address!;
+              garageField = model.address!; // 값 업데이트
             });
           },
         ),
       ],
     );
-  }
-  void dropmenuSelected(String value) {
-    if (value != '국산') {
-      return DropdownMenuItem(
-        value: dropName2,
-        child: child
-      )
-    }
   }
 
   Widget bottomSheet() {
@@ -198,5 +283,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       mPhoto = File(image!.path);
     });
+    Navigator.pop(context);
+  }
+  Future<void> _uploadProfileImage() async {
+    if (user != null && image != null) {
+      File mPhoto = File(image!.path); // XFile을 File로 변환
+
+      final storageReference = storage.ref().child('profile_images/$userEmail.jpg');
+      await storageReference.putFile(mPhoto);
+      final downloadURL = await storageReference.getDownloadURL();
+      await _firestore.collection('members').doc(userEmail).set({
+        'name': nameField,
+        'profileImageURL': downloadURL,
+        'carMade' : carMadeField,
+        'carModel' : carModelField,
+        'garage' : garageField,
+      });
+      _fetchUserData();
+    }
   }
 }

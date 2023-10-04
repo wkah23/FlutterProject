@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "732770970883-qn79fsg8mejihnpntrlcac2pvg3ri6r6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.study.firebase.dewbiapp",
+            "certificate_hash": "ea34aa23453882c2b7c775b6e605b4b5d93804d3"
+          }
+        },
+        {
           "client_id": "732770970883-01ucgj8futd8mbl35v5e18sctlviqmcs.apps.googleusercontent.com",
           "client_type": 3
         }

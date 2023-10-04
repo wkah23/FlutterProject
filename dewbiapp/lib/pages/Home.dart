@@ -24,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              
               Text(
                 "환영합니다!  $userEmail 님",
                 style: const TextStyle(fontSize: 20, 
